@@ -1,0 +1,81 @@
+```yaml
+name: Compilar APK NEXRUN
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    name: Gerar APK Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Adicionar plataforma Android
+        run: npx cap add android
+
+      - name: Sincronizar projeto
+        run: npx cap sync android
+
+      - name: Compilar APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEXRUN-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
+**Atenção:** o arquivo precisa ficar dentro da pasta `.github/workflows/`. Se você estiver na tela de criação de um fluxo de trabalho, o GitHub normalmente já prepara esse caminho.
+
+### ✅ PASSO 3 — Salvar
+1. Clique em **Commit changes…**.
+2. Confirme em **Commit changes** novamente.
+
+### ✅ PASSO 4 — Gerar o APK
+Depois de salvar:
+
+1. Entre na aba **Actions** do repositório.
+2. Clique em **Compilar APK NEXRUN**, na lateral esquerda.
+3. Clique em **Run workflow**.
+4. Clique no botão verde **Run workflow** para iniciar.
+
+Espere a execução terminar com um **✔ verde**.
+
+### 📲 PASSO 5 — Baixar o aplicativo
+Quando a compilação terminar:
+
+1. Abra a execução concluída.
+2. Procure a seção **Artifacts** no final da página.
+3. Clique em **NEXRUN-APK** para baixar o APK.
+
+**Importante:** isso gera um APK de teste. A compilação só funcionará se os arquivos do aplicativo, incluindo `package.json`, `capacitor.config.ts` e a pasta `www`, já estiverem na raiz do repositório.
+
+**Faça agora o PASSO 1 e me envie uma captura da próxima tela.** Vou te orientar exatamente onde clicar.
