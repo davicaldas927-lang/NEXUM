@@ -28,3 +28,11 @@ IMPORTANTE:
 - Este ZIP prepara o projeto, mas a compilação final precisa ocorrer no seu computador com Node.js e Android Studio instalados.
 - Teste GPS e mapas em um celular real. A disponibilidade pode depender de permissões e conexão.
 - Login e ranking compartilhado online ainda precisam de backend; o protótipo atual usa dados locais/de demonstração.
+
+
+COMPILAÇÃO AUTOMÁTICA NO GITHUB:
+- O pacote inclui .github/workflows/build-apk.yml.
+- Envie o conteúdo desta pasta para um repositório GitHub.
+- Abra a aba Actions, escolha "Compilar APK NEXRUN" e clique em "Run workflow".
+- Quando concluir com sucesso, abra a execução e baixe o artefato "NEXRUN-APK-debug".
+- Este fluxo gera um APK de depuração para testes; não é um APK de release assinado para publicação.
