@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101711">
+<title>NexRun — Corrida inteligente</title>
+<style>
+:root{--bg:#0b100d;--panel:#141c16;--panel2:#1b251d;--line:#2b382d;--text:#f2f7ef;--muted:#9aab9b;--lime:#c8ff4d;--lime2:#a7e62d;--orange:#ff9864;--radius:22px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#233922 0,transparent 38%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0}a{color:inherit}.shell{max-width:1240px;margin:auto;padding:0 24px 44px}
+header{height:84px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #273229;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:-.7px;font-size:22px}.logo{height:42px;width:42px;border-radius:14px;background:var(--lime);color:#101711;display:grid;place-items:center;font-weight:1000;font-size:22px;transform:rotate(-5deg)}.brand small{display:block;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1.7px;margin-top:1px}
+nav{display:flex;gap:5px;align-items:center}nav button{background:transparent;color:var(--muted);padding:11px 14px;border-radius:12px;font-size:13px;font-weight:700}nav button.active,nav button:hover{background:var(--panel2);color:var(--lime)}.user{width:39px;height:39px;border-radius:50%;display:grid;place-items:center;background:#293c2a;border:1px solid #405640;font-weight:800;color:var(--lime)}
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;padding:30px 0 22px}.hero-main{min-height:270px;border-radius:28px;background:linear-gradient(120deg,#c8ff4d 0%,#a9e64b 58%,#83bd35 100%);color:#14200e;padding:31px;position:relative;overflow:hidden}
+.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:900}.hero-main h1{font-size:clamp(35px,4.4vw,57px);line-height:.98;letter-spacing:-2.8px;margin:17px 0 13px;max-width:480px}.hero-main p{font-size:14px;line-height:1.6;max-width:380px;margin:0;color:#304321}.hero-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}.btn-dark{background:#14200e;color:white;padding:13px 18px;border-radius:13px;font-weight:800}.btn-light{background:#efffd0;color:#17230e;padding:13px 18px;border-radius:13px;font-weight:800;border:1px solid #7caa37}
+.hero-art{position:absolute;right:-2px;bottom:-20px;font-size:155px;opacity:.18;transform:rotate(-18deg);pointer-events:none}.side-card{background:linear-gradient(145deg,#1b291d,#121a14);border:1px solid var(--line);border-radius:28px;padding:25px;display:flex;flex-direction:column;justify-content:space-between}.side-top{display:flex;justify-content:space-between;align-items:center}.pill{font-size:10px;font-weight:900;letter-spacing:1px;padding:7px 10px;border-radius:20px;background:#263626;color:var(--lime)}.side-card h2{font-size:22px;letter-spacing:-.7px;margin:20px 0 7px}.side-card p{color:var(--muted);font-size:13px;line-height:1.5;margin:0}.progress{height:7px;background:#29352a;border-radius:9px;overflow:hidden;margin:17px 0 8px}.progress span{display:block;height:100%;width:0;background:var(--lime);border-radius:9px;transition:width .3s}.between{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:22px 0 14px;gap:12px}.section-head h2{font-size:21px;letter-spacing:-.7px;margin:0}.section-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.text-btn{color:var(--lime);background:transparent;font-weight:800;font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:19px}.stat .label{font-size:11px;color:var(--muted);font-weight:700}.stat .value{font-size:28px;font-weight:850;letter-spacing:-1px;margin:12px 0 5px}.stat .unit{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0}.trend{font-size:11px;color:var(--lime)}
+.content-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:22px}.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;min-width:0}.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.card-head h3{margin:0;font-size:16px}.card-head span{font-size:11px;color:var(--muted)}
+.runbox{border-radius:19px;background:#0d140f;border:1px solid #28372a;padding:20px}.run-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);margin-right:7px;box-shadow:0 0 12px #c8ff4d}.timer{font-size:clamp(38px,5vw,56px);letter-spacing:-2px;font-weight:850;text-align:center;margin:21px 0 3px;font-variant-numeric:tabular-nums}.run-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin:22px 0}.run-stats strong{font-size:20px;display:block}.run-stats small{color:var(--muted);font-size:10px}.run-controls{display:flex;gap:9px}.run-controls button{flex:1;padding:13px 8px;border-radius:12px;font-size:12px;font-weight:850}.primary{background:var(--lime);color:#13200d}.secondary{background:#202b22;color:var(--text);border:1px solid #334335}.danger{background:#3c2822;color:#ffb49a;border:1px solid #5e3b30}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin:13px 2px 0}
+.activity-list{display:flex;flex-direction:column;gap:10px}.activity{display:flex;align-items:center;gap:12px;padding:12px;border-radius:15px;background:#101711;border:1px solid #253127}.activity-icon{width:42px;height:42px;border-radius:13px;background:#263626;color:var(--lime);display:grid;place-items:center;font-size:20px}.activity-info{flex:1;min-width:0}.activity-info strong{font-size:13px;display:block}.activity-info small{font-size:11px;color:var(--muted)}.activity-distance{text-align:right;font-weight:800;font-size:14px}.activity-distance small{display:block;color:var(--muted);font-weight:500;font-size:10px;margin-top:3px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:22px}.feature{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:18px}.feature-icon{font-size:21px;margin-bottom:15px}.feature h4{margin:0 0 7px;font-size:14px}.feature p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.page{display:none}.page.active{display:block}.dashboard.active{display:block}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:7px}.field input,.field select{width:100%;background:#0d140f;color:var(--text);border:1px solid #334335;padding:12px;border-radius:11px;outline:none}.field input:focus,.field select:focus{border-color:var(--lime)}.wide{grid-column:1/-1}
+.goal-row{display:flex;gap:10px;align-items:center;margin-top:15px}.goal-row .field{flex:1}.goal-row button{padding:12px 15px;border-radius:11px;background:var(--lime);color:#17220e;font-weight:800}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.plan{background:#101711;border:1px solid #2a392c;border-radius:17px;padding:18px}.plan .level{font-size:10px;color:var(--lime);font-weight:900;letter-spacing:1px}.plan h3{font-size:16px;margin:11px 0 8px}.plan p{font-size:12px;color:var(--muted);line-height:1.5;min-height:54px}.plan button{width:100%;padding:11px;border-radius:10px;background:#263626;color:var(--lime);font-weight:800;font-size:12px}
+.empty{padding:28px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed #344536;border-radius:15px}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #273229;margin-top:35px;padding-top:20px;color:#718273;font-size:11px}.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:var(--lime);color:#15210e;padding:13px 18px;border-radius:13px;font-weight:800;font-size:13px;transition:.25s;pointer-events:none;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:850px){nav button{padding:9px;font-size:12px}.hero{grid-template-columns:1fr}.side-card{min-height:210px}.content-grid{grid-template-columns:1fr}.features{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.shell{padding:0 14px 30px}header{height:auto;min-height:74px;flex-wrap:wrap;padding:14px 0}.brand{font-size:19px}.logo{width:37px;height:37px}nav{order:3;width:100%;overflow-x:auto;justify-content:space-between}nav button{white-space:nowrap}.hero{padding-top:18px}.hero-main{padding:24px;min-height:300px}.hero-main h1{font-size:43px}.hero-art{font-size:110px}.stats{grid-template-columns:repeat(2,1fr)}.stat{padding:15px}.stat .value{font-size:25px}.features,.plan-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:16px}.section-head{align-items:start}.run-stats strong{font-size:18px}}
+
+.leaderboard-row{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:13px;border-bottom:1px solid var(--line)}
+.leaderboard-row:last-child{border-bottom:0}.rank-num{width:30px;height:30px;border-radius:10px;background:#293a28;color:var(--lime);display:grid;place-items:center;font-weight:900}
+.challenge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.challenge-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:19px}.challenge-card h3{font-size:16px;margin:13px 0 7px}.challenge-card p{font-size:12px;color:var(--muted);line-height:1.5}.challenge-card button{width:100%;padding:11px;border-radius:10px;background:#293a28;color:var(--lime);font-weight:850}
+.modal{position:fixed;inset:0;background:#000a;display:none;place-items:center;padding:18px;z-index:99}.modal.open{display:grid}.modal-box{width:min(420px,100%);background:#141c16;border:1px solid var(--line);border-radius:22px;padding:24px}.modal-box h2{margin:0 0 8px}.modal-box p{font-size:12px;color:var(--muted);line-height:1.6}.modal-box input{width:100%;background:#0d140f;color:var(--text);border:1px solid #344436;padding:12px;border-radius:11px;margin:8px 0 14px}.modal-actions{display:flex;gap:8px}.modal-actions button{flex:1;padding:12px;border-radius:11px;font-weight:800}
+@media(max-width:700px){.challenge-grid{grid-template-columns:1fr}.shell{padding-left:12px;padding-right:12px}nav{gap:2px;overflow-x:auto}nav button{white-space:nowrap;padding:9px;font-size:11px}}
+
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+ <div class="brand"><div class="logo">N</div><div>NEXRUN<small>UMA EXPERIÊNCIA DC NEXUM</small></div></div>
+ <nav aria-label="Navegação principal">
+  <button class="active" data-page="inicio">Início</button><button data-page="corrida">Correr</button><button data-page="historico">Histórico</button><button data-page="ranking">Ranking</button><button data-page="desafios">Desafios</button><button data-page="treinos">Treinos</button><button data-page="perfil">Perfil</button>
+ </nav>
+ <div style="display:flex;align-items:center;gap:8px"><div class="user" id="avatar" title="Perfil">DC</div><button class="secondary" id="loginOpen" style="padding:9px 11px;border-radius:10px;font-size:11px">Entrar / Criar conta</button></div>
+</header>
+<main>
+<section id="inicio" class="page dashboard active">
+ <div class="hero">
+  <div class="hero-main"><div class="eyebrow">SEU PRÓXIMO PASSO COMEÇA AQUI</div><h1>Supere seus<br>próprios limites.</h1><p>Seu ritmo. Sua evolução. Sua corrida. Tudo em um só lugar.</p><div class="hero-actions"><button class="btn-dark" data-go="corrida">▶ &nbsp; Começar corrida</button><button class="btn-light" data-go="treinos">Explorar treinos ↗</button></div><div class="hero-art">↗</div></div>
+  <div class="side-card"><div class="side-top"><span class="eyebrow">META DA SEMANA</span><span class="pill">VAMOS NESSA</span></div><div><h2 id="goalHeadline">5 km de evolução.</h2><p>Consistência vale mais que velocidade. Cada quilômetro conta.</p><div class="progress"><span id="goalBar"></span></div><div class="between"><span id="goalDone">0 km concluídos</span><span id="goalTarget">Meta: 15 km</span></div></div></div>
+ </div>
+ <div class="section-head"><div><h2>Seu desempenho</h2><p>Um resumo da sua jornada de corrida.</p></div><button class="text-btn" data-go="historico">Ver histórico ↗</button></div>
+ <div class="stats">
+  <div class="stat"><div class="label">DISTÂNCIA TOTAL</div><div class="value"><span id="totalKm">0.0</span> <span class="unit">km</span></div><div class="trend">↗ Cada km é uma conquista</div></div>
+  <div class="stat"><div class="label">CORRIDAS</div><div class="value" id="totalRuns">0</div><div class="trend">Sua consistência em ação</div></div>
+  <div class="stat"><div class="label">TEMPO CORRENDO</div><div class="value" id="totalTime">0 <span class="unit">min</span></div><div class="trend">Tempo investido em você</div></div>
+  <div class="stat"><div class="label">MELHOR RITMO</div><div class="value" id="bestPace">—</div><div class="trend">min/km</div></div>
+ </div>
+ <div class="content-grid">
+  <div class="card"><div class="card-head"><h3>Corrida rápida</h3><span>GPS do dispositivo</span></div><div class="runbox"><div class="run-top"><span><i class="live-dot"></i><span id="runStatus">PRONTO PARA COMEÇAR</span></span><span id="gpsStatus">GPS desligado</span></div><div class="timer" id="timer">00:00:00</div><div class="run-stats"><div><strong id="liveDistance">0.00</strong><small>KM</small></div><div><strong id="livePace">—</strong><small>RITMO /KM</small></div><div><strong id="liveCalories">0</strong><small>KCAL (EST.)</small></div></div><div class="run-controls"><button id="startBtn" class="primary">▶ Iniciar</button><button id="pauseBtn" class="secondary" disabled>Ⅱ Pausar</button><button id="finishBtn" class="secondary" disabled>✓ Finalizar</button></div></div><p class="hint">Permita o acesso à localização para medir a distância por GPS. Em computadores, a localização pode exigir HTTPS e um dispositivo compatível.</p></div>
+  <div class="card"><div class="card-head"><h3>Atividades recentes</h3><button class="text-btn" data-go="historico">Ver todas</button></div><div id="recentList" class="activity-list"><div class="empty">Sua primeira corrida começa agora. 🏃</div></div></div>
+ </div>
+ <div class="features">
+  <div class="feature"><div class="feature-icon">📍</div><h4>GPS e distância</h4><p>Acompanhe distância, duração e ritmo durante a corrida.</p></div>
+  <div class="feature"><div class="feature-icon">🎯</div><h4>Metas pessoais</h4><p>Defina objetivos semanais e acompanhe seu progresso.</p></div>
+  <div class="feature"><div class="feature-icon">📈</div><h4>Seu histórico</h4><p>Veja suas atividades anteriores e evolução acumulada.</p></div>
+ </div>
+</section>
+<section id="corrida" class="page">
+ <div class="section-head"><div><h2>Central de corrida</h2><p>Prepare-se, aperte iniciar e deixe o NexRun acompanhar.</p></div></div>
+ <div class="content-grid">
+  <div class="card"><div class="card-head"><h3>Seu treino ao vivo</h3><span>GPS + cronômetro</span></div><div class="runbox"><div class="run-top"><span><i class="live-dot"></i><span id="runStatus2">PRONTO PARA COMEÇAR</span></span><span id="gpsStatus2">GPS desligado</span></div><div class="timer" id="timer2">00:00:00</div><div class="run-stats"><div><strong id="liveDistance2">0.00</strong><small>KM</small></div><div><strong id="livePace2">—</strong><small>RITMO /KM</small></div><div><strong id="liveCalories2">0</strong><small>KCAL (EST.)</small></div></div><div class="run-controls"><button id="startBtn2" class="primary">▶ Iniciar</button><button id="pauseBtn2" class="secondary" disabled>Ⅱ Pausar</button><button id="finishBtn2" class="secondary" disabled>✓ Finalizar</button></div></div><p class="hint">Dica: faça aquecimento antes de correr e respeite seus limites. As calorias são apenas uma estimativa.</p></div>
+  <div class="card"><div class="card-head"><h3>Checklist do corredor</h3></div><div class="activity-list"><div class="activity"><div class="activity-icon">👟</div><div class="activity-info"><strong>Calçado adequado</strong><small>Use um tênis confortável.</small></div></div><div class="activity"><div class="activity-icon">💧</div><div class="activity-info"><strong>Hidratação</strong><small>Beba água antes e depois.</small></div></div><div class="activity"><div class="activity-icon">🌤️</div><div class="activity-info"><strong>Escolha o percurso</strong><small>Prefira locais seguros e iluminados.</small></div></div><div class="activity"><div class="activity-icon">🧘</div><div class="activity-info"><strong>Aquecimento</strong><small>Comece em ritmo leve.</small></div></div></div></div>
+ </div>
+</section>
+<section id="historico" class="page">
+ <div class="section-head"><div><h2>Histórico de atividades</h2><p>Suas corridas salvas neste dispositivo.</p></div><button class="text-btn" id="exportBtn">Exportar dados ↓</button></div>
+ <div class="stats"><div class="stat"><div class="label">DISTÂNCIA</div><div class="value"><span id="historyKm">0.0</span> <span class="unit">km</span></div></div><div class="stat"><div class="label">ATIVIDADES</div><div class="value" id="historyRuns">0</div></div><div class="stat"><div class="label">TEMPO TOTAL</div><div class="value" id="historyTime">0 <span class="unit">min</span></div></div><div class="stat"><div class="label">CALORIAS ESTIMADAS</div><div class="value" id="historyCalories">0</div></div></div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><h3>Todas as atividades</h3><span id="historyCount">0 corridas</span></div><div id="historyList" class="activity-list"><div class="empty">Ainda não há corridas salvas. Que tal começar uma?</div></div></div>
+</section>
+
+<section id="ranking" class="page">
+ <div class="section-head"><div><h2>Ranking da comunidade</h2><p>Exemplo visual com corredores fictícios e seus dados locais.</p></div><span class="pill">SEMANA ATUAL</span></div>
+ <div class="content-grid">
+  <div class="card"><div class="card-head"><h3>Top corredores</h3><span class="muted tiny">km na semana</span></div><div id="leaderboard"></div>
+  <p class="hint">Um ranking real compartilhado entre usuários exige autenticação e banco de dados online. Estes nomes são apenas demonstração.</p></div>
+  <div class="card"><h3>Faça parte da comunidade</h3><p class="muted" style="font-size:13px;line-height:1.7">Crie seu perfil local, acompanhe sua evolução e prepare-se para desafios. O login desta versão é demonstrativo e não cria uma conta online.</p><button class="primary" id="rankLogin" style="padding:12px;border-radius:11px;font-weight:800">Criar meu perfil</button></div>
+ </div>
+</section>
+<section id="desafios" class="page">
+ <div class="section-head"><div><h2>Desafios NEXRUN</h2><p>Escolha um objetivo e acompanhe seu progresso semanal.</p></div></div>
+ <div class="challenge-grid" id="challengeGrid"></div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><h3>Próximo passo</h3><span class="muted tiny">Treino personalizado</span></div><p class="muted" style="font-size:13px;line-height:1.6">Use a área Treinos para selecionar um plano adequado ao seu nível. Aumente distância gradualmente e reserve tempo para recuperação.</p><button class="primary" data-go="treinos" style="padding:12px;border-radius:11px;font-weight:800">Ver planos de treino</button></div>
+</section>
+
+<section id="treinos" class="page">
+ <div class="section-head"><div><h2>Planos de treino</h2><p>Escolha um objetivo e avance no seu ritmo.</p></div></div>
+ <div class="plan-grid">
+  <div class="plan"><div class="level">INICIANTE · 3 SEMANAS</div><h3>Comece a correr</h3><p>Alternância de caminhada e corrida leve para criar o hábito gradualmente.</p><button data-plan="Comece a correr">Escolher plano</button></div>
+  <div class="plan"><div class="level">INTERMEDIÁRIO · 4 SEMANAS</div><h3>Primeiros 5 km</h3><p>Construa resistência e trabalhe para completar seus primeiros cinco quilômetros.</p><button data-plan="Primeiros 5 km">Escolher plano</button></div>
+  <div class="plan"><div class="level">AVANÇADO · 6 SEMANAS</div><h3>Ritmo e resistência</h3><p>Combine corridas leves, intervalos e recuperação para estruturar sua rotina.</p><button data-plan="Ritmo e resistência">Escolher plano</button></div>
+  <div class="plan"><div class="level">RECUPERAÇÃO</div><h3>Corrida leve</h3><p>Uma sessão confortável, focada em movimento e recuperação.</p><button data-plan="Corrida leve">Escolher plano</button></div>
+  <div class="plan"><div class="level">CONSISTÊNCIA</div><h3>Desafio semanal</h3><p>Organize a semana com sessões curtas e uma meta realista de distância.</p><button data-plan="Desafio semanal">Escolher plano</button></div>
+  <div class="plan"><div class="level">PERSONALIZADO</div><h3>Seu objetivo</h3><p>Defina uma meta semanal e adapte os treinos à sua rotina.</p><button data-go="perfil">Configurar meta</button></div>
+ </div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><h3>Plano selecionado</h3><span>Seu foco atual</span></div><p id="selectedPlan" style="color:var(--muted);font-size:14px;margin:0">Nenhum plano selecionado. Escolha um dos planos acima para começar.</p></div>
+</section>
+<section id="perfil" class="page">
+ <div class="section-head"><div><h2>Meu perfil</h2><p>Personalize sua experiência no NexRun.</p></div></div>
+ <div class="content-grid">
+  <div class="card"><div class="card-head"><h3>Informações pessoais</h3></div><div class="form-grid"><div class="field"><label for="name">Nome</label><input id="name" placeholder="Como podemos te chamar?"></div><div class="field"><label for="weight">Peso (kg, opcional)</label><input id="weight" type="number" min="25" max="300" placeholder="Ex.: 70"></div><div class="field wide"><label for="goal">Meta semanal de distância (km)</label><input id="goal" type="number" min="1" max="300" value="15"></div><div class="field wide"><label for="unit">Unidade de distância</label><select id="unit"><option value="km">Quilômetros (km)</option><option value="mi">Milhas (mi) — visualização futura</option></select></div></div><div class="goal-row"><button id="saveProfile">Salvar perfil</button></div></div>
+  <div class="card"><div class="card-head"><h3>Sobre o NexRun</h3><span>Versão demonstrativa</span></div><div class="activity-list"><div class="activity"><div class="activity-icon">⚡</div><div class="activity-info"><strong>NexRun</strong><small>Corrida inteligente, no seu ritmo.</small></div></div><div class="activity"><div class="activity-icon">✳</div><div class="activity-info"><strong>Desenvolvido por DC Nexum</strong><small>Ideia de produto e protótipo inicial.</small></div></div><div class="activity"><div class="activity-icon">🔒</div><div class="activity-info"><strong>Dados locais</strong><small>Este protótipo guarda dados no navegador deste dispositivo.</small></div></div></div></div>
+ </div>
+</section>
+</main>
+<footer><span>© 2026 NexRun · Uma ideia DC Nexum</span><span>Movimente-se com propósito. Evolua um passo de cada vez.</span></footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+ <div class="modal-box"><h2 id="loginTitle">Seu perfil NEXRUN</h2>
+ <p>Modo de demonstração: escolha um nome para personalizar a experiência. Esta versão não cria uma conta online.</p>
+ <label for="loginName" class="muted tiny">Nome de exibição</label><input id="loginName" autocomplete="nickname" placeholder="Como podemos te chamar?">
+ <p>Não informe senhas nem dados confidenciais. Login seguro será implementado na etapa de backend.</p>
+ <div class="modal-actions"><button class="secondary" id="cancelLogin">Cancelar</button><button class="primary" id="demoLogin">Continuar</button></div></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const storeKey='nexrun_v1';
+let data={runs:[],goal:15,name:'',weight:'',plan:''};
+try{const saved=JSON.parse(localStorage.getItem(storeKey)||'null');if(saved)data={...data,...saved};}catch(e){}
+let running=false,paused=false,startAt=0,elapsedBefore=0,watchId=null,tickId=null,distance=0,lastPos=null,routePoints=[],activeStart=null;
+function persist(){try{localStorage.setItem(storeKey,JSON.stringify(data))}catch(e){}}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function fmtTime(s){s=Math.max(0,Math.floor(s));return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')}
+function elapsed(){return elapsedBefore+(running&&!paused?(Date.now()-startAt)/1000:0)}
+function paceText(km,secs){if(km<=0||!isFinite(km)||!isFinite(secs))return '—';let n=Math.round(secs/km);return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`}
+function calories(km){return Math.round(km*(Number(data.weight)||70)*0.9)}
+function updateLive(){const sec=elapsed(),km=distance/1000,pace=paceText(km,sec),vals={timer:fmtTime(sec),timer2:fmtTime(sec),liveDistance:km.toFixed(2),liveDistance2:km.toFixed(2),livePace:pace,livePace2:pace,liveCalories:calories(km),liveCalories2:calories(km)};Object.entries(vals).forEach(([id,v])=>$(id).textContent=v)}
+function setRunButtons(){['startBtn','startBtn2'].forEach(id=>$(id).disabled=running&&!paused);['pauseBtn','pauseBtn2'].forEach(id=>{ $(id).disabled=!running;$(id).textContent=paused?'▶ Retomar':'Ⅱ Pausar'});['finishBtn','finishBtn2'].forEach(id=>$(id).disabled=!running&&!paused)}
+function status(text,gps){['runStatus','runStatus2'].forEach(id=>$(id).textContent=text);['gpsStatus','gpsStatus2'].forEach(id=>$(id).textContent=gps)}
+function beginRun(){if(running&&!paused)return;if(paused){paused=false;running=true;startAt=Date.now();status('CORRIDA EM ANDAMENTO',$('gpsStatus').textContent);tickId=setInterval(updateLive,500);setRunButtons();return}
+ running=true;paused=false;distance=0;lastPos=null;routePoints=[];elapsedBefore=0;activeStart=new Date().toISOString();startAt=Date.now();status('CORRIDA EM ANDAMENTO','Buscando GPS…');tickId=setInterval(updateLive,500);setRunButtons();
+ if(navigator.geolocation){watchId=navigator.geolocation.watchPosition(pos=>{if(!running||paused)return;const p=pos.coords;if(lastPos&&p.latitude!=null&&p.longitude!=null){const d=haversine(lastPos.lat,lastPos.lon,p.latitude,p.longitude);if(d<100&&d>0.7)distance+=d}lastPos={lat:p.latitude,lon:p.longitude};routePoints.push([p.latitude,p.longitude]);status('CORRIDA EM ANDAMENTO',`GPS ±${Math.round(p.accuracy||0)} m`);updateLive()},err=>{status('CORRIDA EM ANDAMENTO',err.code===1?'GPS sem permissão':'GPS indisponível');},{enableHighAccuracy:true,maximumAge:1000,timeout:12000})}else status('CORRIDA EM ANDAMENTO','GPS não compatível');
+}
+function haversine(a,b,c,d){const r=Math.PI/180,dl=(c-a)*r,do_=(d-b)*r,x=Math.sin(dl/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(do_/2)**2;return 6371000*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function pauseRun(){if(!running)return;elapsedBefore=elapsed();running=false;paused=true;if(watchId!==null)navigator.geolocation?.clearWatch(watchId);watchId=null;clearInterval(tickId);status('CORRIDA PAUSADA','GPS pausado');setRunButtons();updateLive()}
+function finishRun(){if(!running&&!paused)return;const sec=Math.round(elapsed()),km=distance/1000;if(watchId!==null)navigator.geolocation?.clearWatch(watchId);clearInterval(tickId);running=false;paused=false;watchId=null;if(km>0.005||sec>=10){data.runs.unshift({id:Date.now(),date:new Date().toISOString(),distance:km,seconds:sec,calories:calories(km),pace:paceText(km,sec),points:routePoints.length});persist();renderAll();toast('Corrida salva no seu histórico!')}else toast('Treino muito curto para salvar.');distance=0;elapsedBefore=0;lastPos=null;routePoints=[];updateLive();status('PRONTO PARA COMEÇAR','GPS desligado');setRunButtons()}
+function wireRun(suffix=''){ $('startBtn'+suffix).addEventListener('click',beginRun);$('pauseBtn'+suffix).addEventListener('click',pauseRun);$('finishBtn'+suffix).addEventListener('click',finishRun)}
+wireRun();wireRun('2');
+function renderActivities(target,items,emptyText){const el=$(target);if(!items.length){el.innerHTML=`<div class="empty">${emptyText}</div>`;return}el.innerHTML=items.map(r=>{const date=new Date(r.date);return `<div class="activity"><div class="activity-icon">🏃</div><div class="activity-info"><strong>${date.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</strong><small>${fmtTime(r.seconds)} · ${r.pace} min/km</small></div><div class="activity-distance">${r.distance.toFixed(2)} km<small>≈ ${r.calories} kcal</small></div></div>`}).join('')}
+function renderAll(){const runs=data.runs,totalKm=runs.reduce((a,r)=>a+r.distance,0),secs=runs.reduce((a,r)=>a+r.seconds,0),cals=runs.reduce((a,r)=>a+r.calories,0),best=runs.filter(r=>r.distance>0).sort((a,b)=>a.seconds/a.distance-b.seconds/b.distance)[0];$('totalKm').textContent=totalKm.toFixed(1);$('totalRuns').textContent=runs.length;$('totalTime').innerHTML=`${Math.round(secs/60)} <span class="unit">min</span>`;$('bestPace').textContent=best?best.pace:'—';$('historyKm').textContent=totalKm.toFixed(1);$('historyRuns').textContent=runs.length;$('historyTime').innerHTML=`${Math.round(secs/60)} <span class="unit">min</span>`;$('historyCalories').textContent=cals;$('historyCount').textContent=`${runs.length} corrida${runs.length===1?'':'s'}`;renderActivities('recentList',runs.slice(0,4),'Sua primeira corrida começa agora. 🏃');renderActivities('historyList',runs,'Ainda não há corridas salvas. Que tal começar uma?');const goal=Math.max(1,Number(data.goal)||15),weekAgo=Date.now()-7*86400000,weekly=runs.filter(r=>new Date(r.date).getTime()>=weekAgo).reduce((a,r)=>a+r.distance,0),pct=Math.min(100,weekly/goal*100);$('goalBar').style.width=pct+'%';$('goalDone').textContent=weekly.toFixed(1)+' km concluídos';$('goalTarget').textContent='Meta: '+goal+' km';$('goalHeadline').textContent=pct>=100?'Meta alcançada! 🎉':`${Math.max(0,goal-weekly).toFixed(1)} km para a meta.`;$('name').value=data.name||'';$('weight').value=data.weight||'';$('goal').value=goal;$('selectedPlan').textContent=data.plan?`Plano atual: ${data.plan}. Mantenha a consistência e adapte o ritmo às suas condições.`:'Nenhum plano selecionado. Escolha um dos planos acima para começar.'}
+document.querySelectorAll('nav [data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.go)));
+document.querySelectorAll('[data-plan]').forEach(b=>b.addEventListener('click',()=>{data.plan=b.dataset.plan;persist();renderAll();toast('Plano selecionado: '+data.plan)}));
+$('saveProfile').addEventListener('click',()=>{data.name=$('name').value.trim();data.weight=Math.max(0,Number($('weight').value)||0);data.goal=Math.max(1,Math.min(300,Number($('goal').value)||15));persist();renderAll();toast('Perfil salvo com sucesso!')});
+$('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nexrun-dados.json';a.click();URL.revokeObjectURL(url);toast('Exportação iniciada!')});
+renderAll();updateLive();setRunButtons();
+
+// Recursos extras da versão expandida: ranking demonstrativo, desafios e perfil local.
+const challengeSpecs=[
+ {id:'5k',name:'Primeiros 5 km',tag:'INICIANTE',desc:'Acumule 5 km nesta semana.',target:5,kind:'km'},
+ {id:'15k',name:'Semana em movimento',tag:'CONSISTÊNCIA',desc:'Complete 15 km ao longo da semana.',target:15,kind:'km'},
+ {id:'3runs',name:'Três sessões',tag:'HÁBITO',desc:'Registre três corridas nesta semana.',target:3,kind:'runs'}
+];
+function extraRender(){
+ const wk=Date.now()-7*86400000;
+ const runs=(data.runs||[]).filter(r=>new Date(r.date).getTime()>=wk);
+ const weeklyKm=runs.reduce((a,r)=>a+(r.distance||0),0);
+ const userKm=weeklyKm;
+ const people=[
+  {name:'Ana Ribeiro',km:24.8},{name:'Lucas Martins',km:19.4},
+  {name:'Marina Costa',km:16.2},{name:(data.name||'Você')+' (local)',km:userKm,you:true},
+  {name:'Rafael Lima',km:8.7}
+ ].sort((a,b)=>b.km-a.km);
+ const board=document.getElementById('leaderboard');
+ if(board) board.innerHTML=people.map((p,i)=>`<div class="leaderboard-row"><div class="rank-num">${i+1}</div><div><strong>${p.name}</strong><small class="muted" style="display:block;font-size:10px;margin-top:4px">${p.you?'Seu perfil neste dispositivo':'Corredor demonstrativo'}</small></div><strong>${p.km.toFixed(1)} km</strong></div>`).join('');
+ const joined=data.joined||[];
+ const grid=document.getElementById('challengeGrid');
+ if(grid) grid.innerHTML=challengeSpecs.map(c=>{
+   const progress=c.kind==='runs'?runs.length:weeklyKm;
+   const done=progress>=c.target, isJoined=joined.includes(c.id);
+   return `<div class="challenge-card"><span class="pill">${c.tag}</span><h3>${c.name}</h3><p>${c.desc}</p><div class="progress"><span style="width:${Math.min(100,progress/c.target*100)}%"></span></div><p>${c.kind==='runs'?progress+' / '+c.target+' corridas':progress.toFixed(1)+' / '+c.target+' km'} · ${done?'Concluído!':isJoined?'Você está participando':'Participe do desafio'}</p><button data-join-challenge="${c.id}">${done?'Desafio concluído':isJoined?'Participando ✓':'Participar do desafio'}</button></div>`;
+ }).join('');
+ document.querySelectorAll('[data-join-challenge]').forEach(b=>b.onclick=()=>{
+   data.joined=data.joined||[];
+   if(!data.joined.includes(b.dataset.joinChallenge))data.joined.push(b.dataset.joinChallenge);
+   persist();extraRender();toast('Desafio atualizado!');
+ });
+ const av=document.getElementById('avatar'); if(av) av.textContent=(data.name||'DC').slice(0,2).toUpperCase();
+}
+function openDemoLogin(){document.getElementById('loginName').value=data.name||'';document.getElementById('loginModal').classList.add('open')}
+document.getElementById('loginOpen')?.addEventListener('click',openDemoLogin);
+document.getElementById('rankLogin')?.addEventListener('click',openDemoLogin);
+document.getElementById('cancelLogin')?.addEventListener('click',()=>document.getElementById('loginModal').classList.remove('open'));
+document.getElementById('demoLogin')?.addEventListener('click',()=>{
+ data.name=document.getElementById('loginName').value.trim()||'Corredor';
+ persist();renderAll?.();extraRender();document.getElementById('loginModal').classList.remove('open');toast('Perfil local atualizado!');
+});
+document.getElementById('loginModal')?.addEventListener('click',e=>{if(e.target.id==='loginModal')e.currentTarget.classList.remove('open')});
+document.querySelectorAll('[data-join-challenge]').forEach(b=>b.addEventListener('click',()=>{}));
+const originalRenderAll=renderAll;
+renderAll=function(){originalRenderAll();extraRender()};
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(b.dataset.page==='ranking'||b.dataset.page==='desafios')extraRender()},50)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>setTimeout(extraRender,50)));
+extraRender();
+
+
+// Mapa de percurso opcional via OpenStreetMap/Leaflet. Requer internet.
+(function(){
+ const css=document.createElement('link');css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(css);
+ const script=document.createElement('script');script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+ script.onload=()=>{
+  try{
+   const el=document.getElementById('map');if(!el||!window.L)return;
+   el.innerHTML='';
+   const map=L.map(el).setView([-23.55,-46.63],12);
+   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+   const line=L.polyline([],{color:'#a7e62d',weight:5}).addTo(map);
+   let marker=null;
+   if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(p=>{const ll=[p.coords.latitude,p.coords.longitude];map.setView(ll,15);marker=L.circleMarker(ll,{radius:7,color:'#14200e',fillColor:'#c8ff4d',fillOpacity:1}).addTo(map).bindPopup('Sua localização aproximada');},()=>{});
+   }
+   const oldGeo=navigator.geolocation?.watchPosition;
+   // Track the route independently for this visual map; distance remains handled by the run timer.
+   let tracking=false,watcher=null;
+   const start=document.getElementById('startBtn');
+   start?.addEventListener('click',()=>{if(!navigator.geolocation||tracking)return;tracking=true;watcher=navigator.geolocation.watchPosition(p=>{const ll=[p.coords.latitude,p.coords.longitude];line.addLatLng(ll);map.panTo(ll);if(marker)marker.setLatLng(ll);else marker=L.circleMarker(ll,{radius:7,color:'#14200e',fillColor:'#c8ff4d',fillOpacity:1}).addTo(map);},()=>{}, {enableHighAccuracy:true,maximumAge:1000});});
+   ['finishBtn','pauseBtn'].forEach(id=>document.getElementById(id)?.addEventListener('click',()=>{if(watcher!==null){navigator.geolocation.clearWatch(watcher);watcher=null;tracking=false;}}));
+  }catch(e){console.warn('Mapa não carregou',e)}
+ };
+ document.head.appendChild(script);
+})();
+
+</script>
+</body></html>

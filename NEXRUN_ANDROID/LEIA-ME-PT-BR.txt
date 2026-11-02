@@ -1,0 +1,30 @@
+NEXRUN — DC NEXUM (projeto Android)
+
+1) Instale Node.js LTS: https://nodejs.org/
+2) Instale Android Studio: https://developer.android.com/studio
+3) Extraia este ZIP para uma pasta, por exemplo C:\\NEXRUN_ANDROID.
+4) Abra essa pasta no VS Code: Arquivo > Abrir Pasta.
+5) Abra Terminal > Novo Terminal e rode um comando por vez:
+
+   npm install
+   npx cap add android
+   npx cap sync android
+   npx cap open android
+
+Se 'npx cap add android' disser que Android já existe, siga com 'npx cap sync android'.
+
+GERAR APK:
+- No Android Studio, aguarde a sincronização do Gradle.
+- Se solicitar Android SDK, aceite a instalação.
+- Vá a Build > Build Bundle(s) / APK(s) > Build APK(s).
+- Ao terminar, clique em 'locate' na notificação.
+- O APK de teste normalmente fica em android/app/build/outputs/apk/debug/app-debug.apk.
+
+ATUALIZAR O APP:
+- Edite www/index.html e execute: npx cap sync android
+- Gere o APK novamente no Android Studio.
+
+IMPORTANTE:
+- Este ZIP prepara o projeto, mas a compilação final precisa ocorrer no seu computador com Node.js e Android Studio instalados.
+- Teste GPS e mapas em um celular real. A disponibilidade pode depender de permissões e conexão.
+- Login e ranking compartilhado online ainda precisam de backend; o protótipo atual usa dados locais/de demonstração.
